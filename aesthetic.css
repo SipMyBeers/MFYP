@@ -1,0 +1,31 @@
+Screen {
+    background: #000000;
+}
+
+Header {
+    background: #FF1010;
+    color: #000000;
+}
+
+#output_container {
+    width: 75%;
+    border: ascii #00C8FF;
+    background: #000000;
+}
+
+#thought_stream {
+    color: #00C8FF;
+    width: 100%;
+    padding: 1;
+}
+
+#memory_bank {
+    width: 25%;
+    border: ascii #FF1010;
+}
+
+Input {
+    dock: bottom;
+    border: solid #FF1010;
+    background: #000000;
+}

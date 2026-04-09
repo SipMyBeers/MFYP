@@ -1,3 +1,4 @@
+# SUPERSEDED — pre-Gormers DittoMeThis era file. Kept for reference.
 Certainly! Below is a Python script using the `watchdog` library to monitor the specified directory and handle file operations as described.
 
 ```python

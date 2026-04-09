@@ -1,3 +1,4 @@
+# SUPERSEDED — pre-Gormers DittoMeThis era file. Kept for reference.
 import sqlite3
 import requests
 from bs4 import BeautifulSoup

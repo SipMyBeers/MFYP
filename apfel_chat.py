@@ -1,3 +1,4 @@
+# SUPERSEDED — pre-Gormers DittoMeThis era file. Kept for reference.
 import subprocess
 import asyncio
 import pyperclip

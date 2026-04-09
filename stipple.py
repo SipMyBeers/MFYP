@@ -1,3 +1,4 @@
+# SUPERSEDED — pre-Gormers DittoMeThis era file. Kept for reference.
 from textual.widgets import RichLog
 
 class LeopardRichLog(RichLog):

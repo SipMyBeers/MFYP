@@ -1,3 +1,4 @@
+// SUPERSEDED — pre-Gormers DittoMeThis era file. Kept for reference.
 import { ingestSocialContent } from './feed_to_ditto';
 
 async function stealthFetch(url: string) {

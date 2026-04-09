@@ -1,3 +1,4 @@
+// SUPERSEDED — pre-Gormers DittoMeThis era file. Kept for reference.
 import { Database } from "bun:sqlite";
 import { join } from "path";
 

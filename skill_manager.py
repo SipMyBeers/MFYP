@@ -49,6 +49,7 @@ async def save_skill_entry(
         "clusterTag": cluster,
         "sourceUrl": source_url,
         "subdomain": cluster,
+        "inferenceFlag": 0 if source_url else 1,
     }
 
     async with aiohttp.ClientSession() as session:

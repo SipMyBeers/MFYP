@@ -288,20 +288,32 @@ async def main_loop():
             await asyncio.sleep(30)
     asyncio.create_task(mission_loop())
 
-    # Nightly AAR at 2100 (check every 5 min)
+    # Daily schedule (check every 5 min)
     from daily_aar import run_nightly_aar
-    async def aar_loop():
+    from morning_show import run_morning_show_generation
+    async def daily_schedule():
         last_aar_date = ""
+        last_morning_date = ""
         while True:
             from datetime import datetime
             now = datetime.now()
             today = now.strftime("%Y-%m-%d")
+
+            # 0500 — Generate morning show
+            if now.hour == 5 and now.minute < 5 and today != last_morning_date:
+                print("[MFYP] 0500 — Generating morning show...")
+                for session in sessions:
+                    await run_morning_show_generation(int(session.user_id))
+                last_morning_date = today
+
+            # 2100 — Generate daily AAR
             if now.hour == 21 and now.minute < 5 and today != last_aar_date:
-                print("[MFYP] Running nightly AAR...")
+                print("[MFYP] 2100 — Running nightly AAR...")
                 await run_nightly_aar()
                 last_aar_date = today
-            await asyncio.sleep(300)  # check every 5 min
-    asyncio.create_task(aar_loop())
+
+            await asyncio.sleep(300)
+    asyncio.create_task(daily_schedule())
 
     print(f"[MFYP] Running with {len(sessions)} Gorm sessions. Watching every {WATCHER_INTERVAL}s.")
 

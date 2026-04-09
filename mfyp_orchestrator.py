@@ -277,6 +277,17 @@ async def main_loop():
     from gorm_executor import poll_and_execute
     asyncio.create_task(poll_and_execute())
 
+    # Start mission executor polling in background
+    from mission_executor import run_pending_missions
+    async def mission_loop():
+        while True:
+            try:
+                await run_pending_missions()
+            except Exception as e:
+                print(f"[MFYP] Mission executor error: {e}")
+            await asyncio.sleep(30)
+    asyncio.create_task(mission_loop())
+
     print(f"[MFYP] Running with {len(sessions)} Gorm sessions. Watching every {WATCHER_INTERVAL}s.")
 
     tick = 0

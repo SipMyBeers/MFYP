@@ -45,6 +45,9 @@ async def run_morning_show_generation(user_id: int):
     planning = gorms[day % len(gorms)]
     print(f"[MorningShow] Planning Gorm: {planning['name']}")
 
+    # Portfolio bridges (KillSesh, LootLens, DittoMe)
+    portfolio = await _build_portfolio_block(user_id)
+
     # Generate OPORD
     opord = await _generate_opord(planning, gorms, signals, life_mission)
 
@@ -53,6 +56,10 @@ async def run_morning_show_generation(user_id: int):
 
     # Priority sort + interrupt marking
     ordered = _prioritize(voice_lines)
+
+    # Append portfolio block to OPORD if present
+    if portfolio:
+        opord["portfolio"] = portfolio
 
     # Save
     await _save(user_id, planning["id"], opord, ordered, today)
@@ -251,6 +258,44 @@ async def _save(user_id: int, planning_id: int, opord: dict, lines: list, today:
             )
     except Exception as e:
         print(f"[MorningShow] Save error: {e}")
+
+
+async def _build_portfolio_block(user_id: int) -> str:
+    """Pull signals from KillSesh + LootLens + DittoMe bridges for morning OPORD."""
+    blocks = []
+    try:
+        async with aiohttp.ClientSession() as s:
+            # KillSesh — session anomalies + subscription waste
+            async with s.get(
+                f"{GORMERS_URL}/api/integrations/status",
+                params={"userId": user_id},
+                headers=HEADERS, timeout=aiohttp.ClientTimeout(total=5),
+            ) as r:
+                integrations = (await r.json()).get("integrations", []) if r.status == 200 else []
+
+            connected = {i["product"] for i in integrations if i.get("status") == "connected"}
+
+            if "killsesh" in connected:
+                # Load recent KillSesh findings
+                findings = s.get(
+                    f"{GORMERS_URL}/api/signals/overnight",
+                    params={"userId": user_id, "source": "killsesh"},
+                    headers=HEADERS, timeout=aiohttp.ClientTimeout(total=5),
+                )
+                # Just note it's connected — actual signals come from watcher_findings
+                blocks.append("🔐 SESS: KillSesh connected — session + subscription data active")
+
+            if "lootlens" in connected:
+                blocks.append("📦 FIUTO: LootLens connected — inventory monitoring active")
+
+            if "dittome" in connected:
+                blocks.append("🔍 PONDA: DittoMe connected — competitive intel active")
+    except:
+        pass
+
+    if not blocks:
+        return ""
+    return "PORTFOLIO BRIDGES\n" + "\n".join(blocks)
 
 
 async def _notify(user_id: int, opord: dict, gorm_count: int):

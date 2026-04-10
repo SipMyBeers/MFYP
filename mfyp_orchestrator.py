@@ -54,7 +54,8 @@ async def load_gorm_sessions() -> list[GormSession]:
                 if r.status != 200:
                     print(f"[MFYP] Failed to load Gorms: {r.status}")
                     return []
-                gorms = await r.json()
+                data = await r.json()
+                gorms = data.get("pets", data) if isinstance(data, dict) else data
 
         for gorm in gorms:
             if not gorm.get("is_active"):
